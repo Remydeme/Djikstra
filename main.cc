@@ -1,4 +1,4 @@
-#include "map.hh"
+#include "djikstra.hh"
 #include <iostream>
 
 int main ()

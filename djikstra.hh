@@ -2,23 +2,40 @@
 
 #include <vector>
 
+#include "map.hh"
 
-class Djikstra
+namespace Djikstra
 {
-    
-    public :
 
-        using case_s = struct case_s;
+    class Djikstra
+    {
 
-    private:
+        public :
 
-    /* contain that have been visited and that
-    are not in closed */
 
-    std::vector<case_s*> open_; 
+        Djikstra(Map* map, Tile&& start, Tile&& end);
 
-    /* Closed vector contain the whole of cases that
-    corespond to the path  */
+        Djikstra(Map* map, Tile& start, Tile& end);
+        
+        Tile* search();
+        private:
 
-    std::vector<case_s*> closed_;
-};
+            /* contain that have been visited and that
+               are not in closed */
+
+            std::vector<Tile*> open_; 
+
+            /* Closed vector contain the whole of cases that
+               corespond to the path  */
+
+            std::vector<Tile*> path_;
+
+            /*map that contains all the Tile and information about the node*/
+
+            Map* map_ = nullptr;
+
+            Tile start_;
+
+            Tile end_;
+    };
+}
