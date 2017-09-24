@@ -23,7 +23,6 @@ namespace Djikstra
             /* contain that have been visited and that
                are not in closed */
 
-            std::vector<Tile*> open_; 
 
             /* Closed vector contain the whole of cases that
                corespond to the path  */

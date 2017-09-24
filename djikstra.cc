@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "djikstra.hh"
 
 namespace Djikstra
@@ -25,22 +27,29 @@ namespace Djikstra
         start_.listed_set();
     }
 
+    void display(Tile* c)
+    {
+        std::cout << "current : x : " << c->x_get() << " y : "<< c->y_get() << " w : " << c->weight_get() << "\n";
+    }
 
     Tile* Djikstra::search()
     {
-        Tile* current;
-        Tile* neighbour;
+        std::vector<Tile*> closed;
+        std::vector<Tile*> open_;
+        Tile* current = nullptr;
+        Tile* neighbour = nullptr;
 
         int weight = 0;
 
         open_.push_back(&start_);
 
-        while (true)
+        while (open_.size() > 0)
         {
             current = (*map_)(open_[0]->x_get(), open_[0]->y_get());
-            path_.push_back(current);
+            closed.push_back(current);
             open_.erase(open_.begin());
             /*Stop when we have found the end of the road*/
+            display(current); /* debugging*/ 
             if (current->x_get() == end_.x_get() && current->y_get() == end_.y_get())
                 break;
             else
@@ -50,18 +59,30 @@ namespace Djikstra
                 {
                     for (int y = -1; y <= 1; y++)
                     {
-                        if (x != 0 && y != 0)
+                        std::cout << "\n\n Map : \n";
+                        for (int i = 0; i < map_->h_get(); i++)
+                        {
+                            for (int j = 0; j < map_->w_get(); j++)
+                            {
+                                std::cout << ((*map_)(i, j))->weight_get() << " ";
+                            }
+                            std::cout << "\n";
+                        }
+
+                        if (!((x == 0) && (y == 0)))
                         {
                             if (current->x_get() + x >= 0 && current->x_get() + x < map_->h_get()
                                     && current->y_get() + y >= 0 && current->y_get() + y < map_->w_get())
                             {
-                                if ((*map_)(current->x_get() + x, current->y_get())->type_get() == Tile::Type::WALL &&
-                                        (*map_)(current->x_get(), current->y_get() + y)->type_get() == Tile::Type::WALL)
+                                if ((*map_)(current->x_get() + x, current->y_get() + y)->type_get() ==
+                                        Tile::Type::WALL 
+                                       /* && (*map_)(current->x_get(), current->y_get() + y)->type_get() ==
+                                        Tile::Type::WALL*/)
                                 {
                                     continue;
                                 }
                                 neighbour = (*map_)(current->x_get() + x, current->y_get() + y);
-                                if (x != 0 && y != 0)
+                                if ((x != 0) && (y != 0))
                                     weight = 14;
                                 else
                                     weight = 10;
@@ -83,9 +104,9 @@ namespace Djikstra
                                                     open_.insert(open_.begin() + i, neighbour);
                                                     inserted = true;
                                                 }
-                                                if (!inserted)
-                                                    open_.push_back(neighbour);
                                             }
+                                            if (!inserted)
+                                                open_.push_back(neighbour);
                                         }
                                         else
                                             open_.push_back(neighbour);
@@ -110,7 +131,7 @@ namespace Djikstra
                                                     bool inserted = false;
                                                     for (unsigned int j = 0; j < open_.size() && !inserted; j++)
                                                     {
-                                                        if (neighbour->weight_get() < current->weight_get())
+                                                        if (neighbour->weight_get() < open_[j]->weight_get())
                                                         {
                                                             open_.insert(open_.begin() + j, neighbour);
                                                             inserted = true;
@@ -118,32 +139,34 @@ namespace Djikstra
                                                     }
                                                     if (!inserted)
                                                         open_.push_back(neighbour);
+
                                                 }
                                             }
+
                                             /*
                                                If the node is listed but is not in the open array that mean that 
                                                this point constitute the path so we erase this point of the path.
                                              */
                                             if (!inopen)
                                             {
-                                                 bool inserted = false;
-                                                for(unsigned int i = 0; i < path_.size(); i++)
+                                                for(unsigned int i = 0; i < closed.size(); i++)
                                                 {
-                                                    if (neighbour == path_[i])
+                                                    if (neighbour == closed[i])
                                                     {
-                                                        path_.erase(path_.begin() + i);
+                                                        closed.erase(closed.begin() + i);
+                                                        bool inserted = false;
                                                         for (unsigned int j = 0; j < open_.size() && !inserted; j++)
                                                         {
-                                                            if (neighbour->weight_get() < open_[i]->weight_get())
+                                                            if (neighbour->weight_get() < open_[j]->weight_get())
                                                             {
                                                                 open_.insert(open_.begin() + j, neighbour);
                                                                 inserted = true;
                                                             }
                                                         }
+                                                        if (!inserted)
+                                                            open_.push_back(neighbour);
                                                     }
                                                 }
-                                                if (!inserted)
-                                                    open_.push_back(neighbour);
                                             }
 
                                         }
@@ -155,6 +178,18 @@ namespace Djikstra
                 }
             }
         }
-    return path_[0];
+        if (current == (*map_)(end_.x_get(), end_.y_get()))
+        {
+            do
+            {
+                path_.push_back(current);
+                current = current->father_get();
+            } while (current != (*map_)(start_.x_get(), start_.y_get()));
+            path_.push_back(current);
+        }
+            std::cout << "\n\n Road is :  \n\n\n";
+        for (auto it : path_)
+            display(it);
+        return closed[0];
     }
 }

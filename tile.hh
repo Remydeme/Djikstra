@@ -11,7 +11,7 @@ namespace Djikstra
         public :
 
      
-     constexpr Tile(int x = 0, int y = 0);
+     constexpr Tile (int x = 0, int y = 0, bool is_start = false, bool is_arrival = false);
 
      Tile (Tile&& ) = default;
      Tile (Tile& ) = default;
@@ -23,10 +23,10 @@ namespace Djikstra
 
             enum Type
             {
-                GRASS = 10,
-                ROAD = 15,
-                WALL = 0,
-                WATER = 10
+                GRASS = 'G',
+                ROAD = 'R',
+                WALL = 'W',
+                WATER = 'A' /* as agua*/
             };
 
         using Type = enum Type;
@@ -46,11 +46,15 @@ namespace Djikstra
 
             bool is_listed() const noexcept;
 
+            void type_set(char tile) noexcept;
+
             int weight_get() const noexcept;
 
             int x_get() const noexcept;
 
             int y_get() const noexcept;
+
+            Tile* father_get() const noexcept;
 
             bool is_arrival() const noexcept;
 

@@ -7,14 +7,18 @@
 namespace Djikstra
 {
 
-    inline constexpr Tile::Tile(int x, int y) : x_(x), y_(y)
-    {
-        if (x_ < 0)
-            throw std::out_of_range("X is lower than 0");
-        if (y_ < 0)
-            throw std::out_of_range("Y is lower than 0");
-    }
-  
+    inline constexpr Tile::Tile(int x, int y, bool is_start, bool is_arrival) :
+        is_arrival_(is_arrival),
+        is_start_(is_start),
+        x_(x),
+        y_(y)
+        {  
+            if (x_ < 0)
+                throw std::out_of_range("X is lower than 0");
+            if (y_ < 0)
+                throw std::out_of_range("Y is lower than 0");
+
+        }
 
     inline void Tile::start_set() noexcept
     {
@@ -26,9 +30,38 @@ namespace Djikstra
         is_arrival_ = true;
     }
 
+    inline Tile* Tile::father_get() const noexcept
+    {
+        return father_;
+    }
+
     inline bool Tile::is_arrival() const noexcept
     {
         return is_arrival_;
+    }
+
+    inline void Tile::type_set(char tile) noexcept
+    {
+        switch (tile)
+        {
+            case Type::GRASS:
+                type_ = Type::GRASS;
+                break;
+
+            case Type::WALL:
+                type_ = Type::WALL;
+                break;
+
+            case Type::ROAD:
+                type_ = Type::ROAD; 
+                break;
+
+            case Type::WATER:
+                type_ = Type::WATER;
+            default:
+                type_ = Type::WALL;
+
+        }
     }
 
     inline bool Tile::is_start() const noexcept
@@ -36,16 +69,16 @@ namespace Djikstra
         return is_start_;
     }
 
-   inline void Tile::cood_set(int x, int y) noexcept
-   {
-       x_ = x;
-       y_ = y;
-   }
-
-  
-   inline constexpr Tile::operator int () const
+    inline void Tile::cood_set(int x, int y) noexcept
     {
-      return x_; 
+        x_ = x;
+        y_ = y;
+    }
+
+
+    inline constexpr Tile::operator int () const
+    {
+        return x_; 
     }
 
     inline void Tile::weight_set(int weight) noexcept

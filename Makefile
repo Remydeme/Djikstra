@@ -1,6 +1,6 @@
 CXXFLAGS=-std=c++14 -Wall -Wextra -Werror -pedantic -g3
 CXX=g++
-SRC= main.cc case.cc map.cc 
+SRC= main.cc tile.cc map.cc djikstra.cc 
 VPATH=src
 BIN=path_finding 
 

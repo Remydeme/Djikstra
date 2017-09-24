@@ -15,15 +15,4 @@ namespace Djikstra
 
 */
 
-    bool Tile::operator == (Tile& tile)
-    {
-        if (tile.x_ == x_ && tile.y_ == y_ &&
-            tile.is_listed_ == is_listed_ &&
-            tile.weight_ == weight_ &&
-            tile.is_start_ == is_start_ &&
-            tile.is_arrival_ == is_arrival_ &&
-            tile.type_ == type_)
-            return true;
-        return false;
-    }
 }
